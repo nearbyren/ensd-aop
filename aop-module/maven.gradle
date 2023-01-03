@@ -1,0 +1,57 @@
+apply plugin: 'maven-publish'
+
+// 上传代码到maven仓库
+afterEvaluate {
+    publishing {
+        // 配置maven仓库 仓库地址可配置多个 执行publish任务时 会把aar包发步到所有指定的maven仓库
+        repositories { RepositoryHandler handler ->
+            if (!isRemoteAar.toBoolean()) {
+                //执行命令 右侧 gradle -> xxx-xxx[common-module] -> Tasks -> publishing -> publish
+                // 指定路径的本地仓库
+                handler.maven {url "${rootDir}/repo" }
+                println("指定路径的本地仓库：[${rootDir}/repo]")
+            } else {
+                maven {
+                    url "https://gitlab.ejiayou.com/api/v4/projects/578/packages/maven"
+                    credentials(HttpHeaderCredentials) {
+                        name = 'Deploy-Token'
+                        value = 'NyHu_b5KQ9qRva6MU2J6'
+                    }
+                    authentication {
+                        header(HttpHeaderAuthentication)
+                    }
+                }
+            }
+        }
+        // 配置发布产物
+        publications {
+            // 任务名称 可以随便定义，这里定义了一个名为releaseAar的任务发布到maven
+            releaseAar(MavenPublication) { // 容器可配置的信息MavenPublication
+
+                println("Components所有变体: " + components*.name)
+                // 构建变体 上传其产出的aar
+                from components.release
+
+                // 上传源码
+                artifact sourceJar
+
+                // 库组织 域名/包名表示
+                groupId = 'ejiayou.aop.module'
+
+                // 库名称
+                artifactId = 'aop'
+
+                // 库版本
+                version = '1.0.0'
+
+            }
+        }
+    }
+}
+
+// 上传源码的task
+task sourceJar(type: Jar) {
+    println("上传代码到maven仓库源码路径：${android.sourceSets.main.java.getSrcDirs()}")
+    from android.sourceSets.main.java.getSrcDirs() // 源码路径
+    archiveClassifier = "sources"
+}
