@@ -21,10 +21,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         findViewById<Button>(R.id.btnFastClick).setOnClickListener(object : View.OnClickListener {
-            @FastClickView(2000)
+            @FastClick(interval = 500L)
             override fun onClick(view: View?) {
-                Logger.d("Permission onClick: click me...")
-                permission(view);
+                println("Permission onClick: click me...")
+//                permission(view);
             }
         })
     }

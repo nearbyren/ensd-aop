@@ -1,0 +1,4 @@
+<resources>
+    <!-- onclick IDs -->
+    <item name="view_click_time" type="id" />
+</resources>
