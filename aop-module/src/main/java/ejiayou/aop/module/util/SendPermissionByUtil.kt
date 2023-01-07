@@ -72,9 +72,14 @@ class SendPermissionByUtil private constructor() {
         )
 
     private var DESCRIPTION_PERMISSIONS: MutableMap<String, PermissionDto> = mutableMapOf(
-        "android.permission.CAMERA" to PermissionDto(
-            "android.permission.CAMERA", Description(
-                "访问请准地理位置信息权限说明", "用于向您推荐附近您可能感兴趣的相关信息，包括但不限于内容，服务或用户等，以提升浏览体验，或帮助您在发布的信息或互动中显示位置，不授权该权限不影响app正常使用"
+        "android.permission.ACCESS_FINE_LOCATION" to PermissionDto(
+            "android.permission.ACCESS_FINE_LOCATION", Description(
+                "访问地理位置信息权限说明", "为了判断和收集您的地理位置信息，实现推荐附近优惠加油的油站，不授权该权限会影响app正常使用。"
+            )
+        ),
+        "android.permission.ACCESS_COARSE_LOCATION" to PermissionDto(
+            "android.permission.ACCESS_COARSE_LOCATION", Description(
+                "访问地理位置信息权限说明", "为了判断和收集您的地理位置信息，实现推荐附近优惠加油的油站，不授权该权限会影响app正常使用。"
             )
         ),
         "android.permission.WRITE_EXTERNAL_STORAGE" to PermissionDto(

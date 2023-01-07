@@ -21,15 +21,14 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         findViewById<Button>(R.id.btnFastClick).setOnClickListener(object : View.OnClickListener {
-            @FastClick(interval = 500L)
             override fun onClick(view: View?) {
                 println("Permission onClick: click me...")
-//                permission(view);
+                permission(view)
             }
         })
     }
 
-    @Permission(value = [Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE], requestCode = 999, rationale = "为了更好的体验，请打开相关权限")
+    @Permission(value = [Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION], requestCode = 999, rationale = "为了更好的体验，请打开相关权限")
     fun permission(view: View?) {
         Logger.d("Permission  permission: 权限已打开")
 

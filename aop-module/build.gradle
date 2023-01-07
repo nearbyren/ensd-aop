@@ -8,6 +8,8 @@ plugins {
     id 'kotlin-parcelize'
     id 'maven-publish'
     id 'ejiayou.composing.builds'
+    id 'com.hujiang.android-aspectjx'
+
 }
 //应用maven
 apply from: 'maven.gradle'
@@ -46,6 +48,18 @@ android {
     buildFeatures {
         dataBinding true
     }
+    // AOP 配置
+    aspectjx {
+        // AOP 配置
+        //排除所有package的class文件及库（jar文件）
+        // 排除一些第三方库的包名（Gson、 LeakCanary 和 AOP 有冲突）
+        // 否则就会起冲突：ClassNotFoundException: Didn't find class on path: DexPathList
+        exclude 'kotlinx','androidx', 'com.google' , 'org.jetbrains.kotlin' ,'com.chad',
+                'com.squareup' , 'android.support' , 'com.alipay' , 'versions.9' ,
+                'com.taobao' , 'module-info' ,  'org.apache' , 'me.wangyuwei', 'com.alibaba',
+                "**/module-info.class" , "META-INF.versions.9.module-info" ,
+                "META-INF/versions/9/*.class" , 'com.google', 'com.squareup', 'org.apache'
+    }
 }
 
 dependencies {
@@ -59,5 +73,5 @@ dependencies {
     implementation ThirdLib.Banner.youth
     implementation ThirdLib.Logger.logger
     implementation 'ejiayou.uikit.module:uikit-module:1.0.0'
-    implementation "org.aspectj:aspectjrt:1.9.6"
+    api "org.aspectj:aspectjrt:1.9.6"
 }
