@@ -20,9 +20,8 @@ import ejiayou.aop.module.permis.ResultPermissionCall
  * @created on: 2022/12/31 4:14 下午
  * @description:
  */
-class SendPermissionByUtil private constructor() {
+open class SendPermissionByUtil private constructor() {
 
-    lateinit var sendByResult: SendPermissionByResult
     lateinit var activity: FragmentActivity
     lateinit var resultCall: ResultPermissionCall
     var permissionDialog: PermissionDialog? = null

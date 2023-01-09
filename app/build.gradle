@@ -10,7 +10,8 @@ plugins {
     id 'kotlin-parcelize'
     id 'maven-publish'
     id 'ejiayou.composing.builds'
-    id 'com.hujiang.android-aspectjx'
+//    id 'com.hujiang.android-aspectjx'
+    id 'io.github.wurensen.android-aspectjx'
 
 }
 kapt {
@@ -80,6 +81,7 @@ dependencies {
     api AndroidX.appcompat
     api Google.material
     implementation ThirdLib.Logger.logger
-    api project(':aop-module')
+//    api project(':aop-module')
+    implementation 'ejiayou.aop.module:aop:1.0.0'
 
 }

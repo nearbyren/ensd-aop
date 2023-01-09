@@ -15,7 +15,7 @@ import java.lang.reflect.InvocationTargetException
  * @description:
  */
 @Aspect
-class PermissionAspect {
+open class PermissionAspect {
     @Around("execution(@ejiayou.aop.module.permis.Permission * *(..)) && @annotation(permission)")
     @Throws(Throwable::class)
     fun aroundJoinPoint(joinPoint: ProceedingJoinPoint, permission: Permission?) {
