@@ -2,7 +2,7 @@ rootProject.name = "ensd-aop"
 include ':app'
 include ':aop-module'
 try {
-//    apply from: new File('../ensd-dependency/module_dependency.gradle')
+    apply from: new File('../ensd-dependency/module_dependency.gradle')
 } catch (Exception e) {
     e.printStackTrace()
 }
