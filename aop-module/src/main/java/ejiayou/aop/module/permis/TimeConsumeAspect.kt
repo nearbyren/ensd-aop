@@ -1,4 +1,4 @@
-package ejiayou.aop
+package ejiayou.aop.module.permis
 
 import android.util.Log
 import org.aspectj.lang.JoinPoint
@@ -22,7 +22,7 @@ class TimeConsumeAspect {
 
     var startTime: Long = 0
 
-    @Pointcut("execution(@ejiayou.aop.TimeConsume * *(..))")
+    @Pointcut("execution(@ejiayou.aop.module.permis.TimeConsume * *(..))")
     fun methodTimeConsumePoint() {
     }
 

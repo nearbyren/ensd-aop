@@ -26,7 +26,7 @@ class PermissionDialog(val map: MutableMap<String, PermissionDto>) : BaseBindDia
         val noticeAars = mutableListOf<Description>()
         map.let {
             for (map in map.entries) {
-                val key = map.key
+//                val key = map.key
                 val value = map.value
                 binding.permissionTvTitle.text = value.description.title
                 binding.permissionTvContent.text = value.description.content

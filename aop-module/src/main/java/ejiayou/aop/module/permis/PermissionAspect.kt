@@ -1,7 +1,6 @@
 package ejiayou.aop.module.permis
 
 import android.content.Context
-import android.util.Log
 import androidx.fragment.app.Fragment
 import com.orhanobut.logger.Logger
 import org.aspectj.lang.ProceedingJoinPoint
@@ -18,7 +17,7 @@ import java.lang.reflect.InvocationTargetException
 open class PermissionAspect {
     @Around("execution(@ejiayou.aop.module.permis.Permission * *(..)) && @annotation(permission)")
     @Throws(Throwable::class)
-    fun aroundJoinPoint(joinPoint: ProceedingJoinPoint, permission: Permission?) {
+    open fun aroundJoinPoint(joinPoint: ProceedingJoinPoint, permission: Permission?) {
         Logger.d("Permission  aroundJoinPoint = 启动...")
         var context: Context? = null
         val obj = joinPoint.getThis()

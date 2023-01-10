@@ -5,5 +5,6 @@ package ejiayou.aop.module.permis
  * @created on: 2023/1/5 16:06
  * @description:
  */
-@Target(AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.SOURCE)
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.EXPRESSION)
 annotation class AopOnclick(val value: Long = 1000)
