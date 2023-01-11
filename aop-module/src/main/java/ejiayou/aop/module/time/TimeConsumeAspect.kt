@@ -1,4 +1,4 @@
-package ejiayou.aop.module.permis
+package ejiayou.aop.module.time
 
 import android.util.Log
 import org.aspectj.lang.JoinPoint
@@ -16,13 +16,10 @@ import org.aspectj.lang.reflect.MethodSignature
 @Aspect
 class TimeConsumeAspect {
 
-    companion object {
-        private const val TAG = "TimeConsumeAspect"
-    }
 
     var startTime: Long = 0
 
-    @Pointcut("execution(@ejiayou.aop.module.permis.TimeConsume * *(..))")
+    @Pointcut("execution(@ejiayou.aop.module.time.TimeConsume * *(..))")
     fun methodTimeConsumePoint() {
     }
 
@@ -30,7 +27,7 @@ class TimeConsumeAspect {
     fun doBefore(joinPoint: JoinPoint) {
         val signature: MethodSignature = joinPoint.signature as MethodSignature
         val method = signature.method
-        Log.d(TAG, "doBefore: $method")
+        println("Aspect - doBefore: $method")
         startTime = System.currentTimeMillis()
     }
 
@@ -38,6 +35,6 @@ class TimeConsumeAspect {
     fun doAfter() {
         val endTime = System.currentTimeMillis()
         val consumeTime = endTime - startTime
-        Log.d(TAG, "开始于${startTime}，结束于$endTime, 耗时 $consumeTime ms")
+        println("Aspect - 开始于${startTime}，结束于$endTime, 耗时 $consumeTime ms")
     }
 }

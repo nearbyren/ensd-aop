@@ -7,6 +7,9 @@ import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.orhanobut.logger.Logger
 import ejiayou.aop.module.permis.*
+import ejiayou.aop.module.point.DataPoint
+import ejiayou.aop.module.point.DataPointBehavior
+import ejiayou.aop.module.time.TimeConsume
 import ejiayou.aop.module.util.SendPermissionByUtil
 
 
@@ -15,7 +18,7 @@ import ejiayou.aop.module.util.SendPermissionByUtil
  * @created on: 2022/12/29 7:50 下午
  * @description:
  */
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), DataPointBehavior {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,16 +26,14 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.btnFastClick).setOnClickListener(object : View.OnClickListener {
             override fun onClick(view: View?) {
                 println("Permission onClick: click me...")
-                permission(view)
+                permission()
             }
         })
     }
 
     @Permission(value = [Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION], requestCode = 999, rationale = "为了更好的体验，请打开相关权限")
-    fun permission(view: View?) {
+    fun permission() {
         Logger.d("Permission  permission: 权限已打开")
-
-
     }
 
     @PermissionBefore
@@ -92,5 +93,20 @@ class MainActivity : AppCompatActivity() {
     @TimeConsume
     override fun onResume() {
         super.onResume()
+        addPointParams()
     }
+
+    @DataPoint
+    fun addPointParams() {
+        paramsPoint["xiaomi"] = "xiaomi"
+        paramsPoint["hauwei"] = "hauwei"
+        paramsPoint["oppo"] = "oppo"
+        paramsPoint["vivo"] = "vivo"
+    }
+
+    override fun params(): MutableMap<String, String> {
+        return paramsPoint
+    }
+
+    var paramsPoint: MutableMap<String, String> = mutableMapOf()
 }

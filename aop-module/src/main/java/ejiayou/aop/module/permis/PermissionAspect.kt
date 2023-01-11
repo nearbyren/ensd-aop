@@ -2,7 +2,6 @@ package ejiayou.aop.module.permis
 
 import android.content.Context
 import androidx.fragment.app.Fragment
-import com.orhanobut.logger.Logger
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
 import org.aspectj.lang.annotation.Aspect
@@ -18,7 +17,7 @@ open class PermissionAspect {
     @Around("execution(@ejiayou.aop.module.permis.Permission * *(..)) && @annotation(permission)")
     @Throws(Throwable::class)
     open fun aroundJoinPoint(joinPoint: ProceedingJoinPoint, permission: Permission?) {
-        Logger.d("Permission  aroundJoinPoint = 启动...")
+        println("Aspect - aroundJoinPoint = 启动...")
         var context: Context? = null
         val obj = joinPoint.getThis()
         if (obj is Context) {
@@ -49,23 +48,24 @@ open class PermissionAspect {
                     method.invoke(obj, permission.value, permission.requestCode, permission.rationale, object : ResultPermissionCall {
 
                         override fun permissionBefore(rationale: String) {
-                            val cls: Class<*> = obj.javaClass
-                            val methods = cls.declaredMethods
-                            if (methods.isEmpty()) return
-                            for (method in methods) {
+                            println("Aspect - permissionBefore")
+                            val javaClass: Class<*> = obj.javaClass
+                            val declaredMethods = javaClass.declaredMethods
+                            if (declaredMethods.isEmpty()) return
+                            for (declaredMethod in declaredMethods) {
                                 //过滤不含自定义注解PermissionBefore的方法
-                                val isHasAnnotation =
-                                    method.isAnnotationPresent(PermissionBefore::class.java)
-                                if (isHasAnnotation) {
-                                    method.isAccessible = true
+                                val isHasAnnotations =
+                                    declaredMethod.isAnnotationPresent(PermissionBefore::class.java)
+                                if (isHasAnnotations) {
+                                    declaredMethod.isAccessible = true
                                     //获取方法类型
-                                    val types = method.parameterTypes
-                                    if (types.size != 1) return
+                                    val parameterTypes = declaredMethod.parameterTypes
+                                    if (parameterTypes.size != 1) return
                                     //获取方法上的注解
-                                    method.getAnnotation(PermissionBefore::class.java) ?: return
+                                    declaredMethod.getAnnotation(PermissionBefore::class.java) ?: return
                                     //解析注解上对应的信息
                                     try {
-                                        method.invoke(obj, rationale)
+                                        declaredMethod.invoke(obj, rationale)
                                     } catch (e: IllegalAccessException) {
                                         e.printStackTrace()
                                     } catch (e: InvocationTargetException) {
@@ -76,6 +76,7 @@ open class PermissionAspect {
                         }
 
                         override fun permissionGranted() {
+                            println("Aspect - permissionGranted")
                             //许可授予
                             try {
                                 joinPoint.proceed()
@@ -85,25 +86,26 @@ open class PermissionAspect {
                         }
 
                         override fun permissionNoAskDenied(requestCode: Int, denyNoAskList: List<String>) {
+                            println("Aspect - permissionNoAskDenied")
                             //许可授予 不再询问
-                            val cls: Class<*> = obj.javaClass
-                            val methods = cls.declaredMethods
-                            if (methods.isEmpty()) return
-                            for (method in methods) {
+                            val javaClass: Class<*> = obj.javaClass
+                            val declaredMethods = javaClass.declaredMethods
+                            if (declaredMethods.isEmpty()) return
+                            for (declaredMethod in declaredMethods) {
                                 //过滤不含自定义注解PermissionNoAskDenied的方法
-                                val isHasAnnotation =
-                                    method.isAnnotationPresent(PermissionNoAskDenied::class.java)
-                                if (isHasAnnotation) {
-                                    method.isAccessible = true
+                                val isHasAnnotations =
+                                    declaredMethod.isAnnotationPresent(PermissionNoAskDenied::class.java)
+                                if (isHasAnnotations) {
+                                    declaredMethod.isAccessible = true
                                     //获取方法类型
-                                    val types = method.parameterTypes
-                                    if (types.size != 2) return
+                                    val parameterTypes = declaredMethod.parameterTypes
+                                    if (parameterTypes.size != 2) return
                                     //获取方法上的注解
-                                    method.getAnnotation(PermissionNoAskDenied::class.java)
+                                    declaredMethod.getAnnotation(PermissionNoAskDenied::class.java)
                                         ?: return
                                     //解析注解上对应的信息
                                     try {
-                                        method.invoke(obj, requestCode, denyNoAskList)
+                                        declaredMethod.invoke(obj, requestCode, denyNoAskList)
                                     } catch (e: IllegalAccessException) {
                                         e.printStackTrace()
                                     } catch (e: InvocationTargetException) {
@@ -114,24 +116,25 @@ open class PermissionAspect {
                         }
 
                         override fun permissionDenied(requestCode: Int, denyList: List<String>) {
+                            println("Aspect - permissionDenied")
                             //许可授予 拒绝
-                            val cls: Class<*> = obj.javaClass
-                            val methods = cls.declaredMethods
-                            if (methods.isEmpty()) return
-                            for (method in methods) {
+                            val javaClass: Class<*> = obj.javaClass
+                            val declaredMethods = javaClass.declaredMethods
+                            if (declaredMethods.isEmpty()) return
+                            for (declaredMethod in declaredMethods) {
                                 //过滤不含自定义注解PermissionDenied的方法
-                                val isHasAnnotation =
-                                    method.isAnnotationPresent(PermissionDenied::class.java)
-                                if (isHasAnnotation) {
-                                    method.isAccessible = true
+                                val isHasAnnotations =
+                                    declaredMethod.isAnnotationPresent(PermissionDenied::class.java)
+                                if (isHasAnnotations) {
+                                    declaredMethod.isAccessible = true
                                     //获取方法类型
-                                    val types = method.parameterTypes
-                                    if (types.size != 2) return
+                                    val parameterTypes = declaredMethod.parameterTypes
+                                    if (parameterTypes.size != 2) return
                                     //获取方法上的注解
-                                    method.getAnnotation(PermissionDenied::class.java) ?: return
+                                    declaredMethod.getAnnotation(PermissionDenied::class.java) ?: return
                                     //解析注解上对应的信息
                                     try {
-                                        method.invoke(obj, requestCode, denyList)
+                                        declaredMethod.invoke(obj, requestCode, denyList)
                                     } catch (e: IllegalAccessException) {
                                         e.printStackTrace()
                                     } catch (e: InvocationTargetException) {

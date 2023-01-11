@@ -22,9 +22,9 @@ import ejiayou.aop.module.permis.ResultPermissionCall
  */
 open class SendPermissionByUtil private constructor() {
 
-    lateinit var activity: FragmentActivity
-    lateinit var resultCall: ResultPermissionCall
-    var permissionDialog: PermissionDialog? = null
+    private lateinit var activity: FragmentActivity
+    private lateinit var resultCall: ResultPermissionCall
+    private var permissionDialog: PermissionDialog? = null
 
 
     private var MIN_SDK_PERMISSIONS: MutableMap<String, Int> = mutableMapOf(
@@ -95,12 +95,19 @@ open class SendPermissionByUtil private constructor() {
 
     }
 
+    /**
+     * 检测隐私权限返回结果
+     * @param activity
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
     fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        Logger.d("Permission  onRequestPermissionsResult ")
+        println("Aspect - onRequestPermissionsResult ")
         if (verifyPermissions(*grantResults)) {
             resultCall.permissionGranted()
             //关闭权限说明
-            permissionDialog?.dismiss()
+            dismissDialog()
         } else {
             if (!shouldShowRequestPermissionRationale(activity, *permissions)) {
                 //权限被拒绝并且选中不再提示
@@ -123,32 +130,30 @@ open class SendPermissionByUtil private constructor() {
                 }
                 resultCall.permissionDenied(requestCode, denyList)
                 //关闭权限说明
-                permissionDialog?.dismiss()
+                dismissDialog()
             }
 
         }
     }
 
-
+    /**
+     * 启动检测隐私权限
+     * @param activity
+     * @param permissions
+     * @param requestCode
+     * @param rationale
+     * @param call
+     */
     fun goPermissions(activity: FragmentActivity, vararg permissions: String, requestCode: Int, rationale: String, call: ResultPermissionCall) {
-        Logger.d("Permission  goPermissions ")
+        println("Aspect - goPermissions ")
         resultCall = call
         this.activity = activity
         if (hasSelfPermissions(activity.applicationContext, *permissions)) {
             resultCall.permissionGranted()
         }
-
-        //获取未授权的并显示提示框
-        val hasReminder = hasSelfPermissionsReminder(activity.applicationContext, *permissions)
-        if (hasReminder.isNotEmpty()) {
-            permissionDialog = PermissionDialog(hasReminder)
-            permissionDialog.let { dialog ->
-                dialog?.setGravity(Gravity.TOP)
-                dialog?.show(activity = activity, "permission_dialog")
-            }
-        }
         //无提示语
         if (TextUtils.isEmpty(rationale)) {
+            startReminder(*permissions)
             ActivityCompat.requestPermissions(activity, permissions, requestCode)
         } else {
             //提示语
@@ -157,38 +162,79 @@ open class SendPermissionByUtil private constructor() {
             if (shouldShowRequestPermissionRationale) {
                 showRequestPermissionRationale(activity, requestCode, permissions = permissions, rationale = rationale)
             } else {
+                startReminder(*permissions)
                 ActivityCompat.requestPermissions(activity, permissions, requestCode)
             }
         }
     }
 
+    /**
+     * 打开隐私权限说明
+     * @param activity
+     * @param permissions
+     */
+    private fun startReminder(vararg permissions: String) {
+        //获取未授权的并显示提示框
+        val hasReminder = hasSelfPermissionsReminder(activity.applicationContext, *permissions)
+        if (hasReminder.isNotEmpty()) {
+            println("Aspect - showDialog ")
+            permissionDialog = PermissionDialog(hasReminder)
+            permissionDialog.let { dialog ->
+                dialog?.setGravity(Gravity.TOP)
+                dialog?.show(activity = activity, "permission_dialog")
+            }
+        }
+    }
+
+    /**
+     * 关闭隐私权限说明
+     */
+    private fun dismissDialog() {
+        println("Aspect - dismissDialog ")
+        permissionDialog?.let {
+            if (it.isVisible) {
+                it.dismiss()
+            }
+        }
+        permissionDialog = null
+    }
+
+    /**
+     * 隐私权限被拒绝再次提示
+     * @param activity
+     * @param requestCode
+     * @param permissions
+     * @param rationale
+     */
     private fun showRequestPermissionRationale(activity: Activity?, requestCode: Int, vararg permissions: String, rationale: String) {
-        Logger.d("Permission  showRequestPermissionRationale ")
+        println("Aspect - showRequestPermissionRationale ")
         AlertDialog.Builder(activity).setMessage(rationale).setPositiveButton("确定") { dialog, _ ->
             dialog.dismiss()
+            startReminder(*permissions)
             ActivityCompat.requestPermissions(activity!!, permissions, requestCode)
         }.setNegativeButton("取消") { dialog, _ ->
-            permissionDialog?.dismiss()
+            dismissDialog()
             dialog.dismiss()
         }.create().show()
     }
 
     /***
      * 去设置页开启权限
+     * @param activity
      */
     private fun showToSetting(activity: Activity) {
-        Logger.d("Permission  showToSetting ")
+        println("Aspect - showToSetting ")
         AlertDialog.Builder(activity).setMessage("为了更好的体验，请打开相关权限")
-            .setPositiveButton("确定") { dialog, _ ->
-                dialog.dismiss()
-                //关闭权限说明
-                permissionDialog?.dismiss()
-                PermissionPageManagement.goToSetting(activity)
-            }.setNegativeButton("取消") { dialog, _ ->
-                dialog.dismiss()
-                //关闭权限说明
-                permissionDialog?.dismiss()
-            }.create().show()
+                .setPositiveButton("确定") { dialog, _ ->
+                    dialog.dismiss()
+                    //关闭权限说明
+                    dismissDialog()
+                    PermissionPageManagement.goToSetting(activity)
+                }.setNegativeButton("取消") { dialog, _ ->
+                    dialog.dismiss()
+                    //关闭权限说明
+                    dismissDialog()
+                }.create().show()
     }
 
     /**
@@ -199,7 +245,7 @@ open class SendPermissionByUtil private constructor() {
      * @return 如果某个权限需要提示则返回true
      */
     private fun shouldShowRequestPermissionRationale(activity: Activity?, vararg permissions: String): Boolean {
-        Logger.d("Permission  shouldShowRequestPermissionRationale ")
+        println("Aspect - shouldShowRequestPermissionRationale ")
         for (permission in permissions) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(activity!!, permission)) {
                 return true
@@ -216,7 +262,7 @@ open class SendPermissionByUtil private constructor() {
      * @return return true if all permissions granted else false
      */
     private fun hasSelfPermissions(context: Context, vararg permissions: String): Boolean {
-        Logger.d("Permission  hasSelfPermissions ")
+        println("Aspect - hasSelfPermissions ")
         for (permission in permissions) {
             if (permissionExists(permission) && !hasSelfPermission(context, permission)) {
                 return false
@@ -234,7 +280,7 @@ open class SendPermissionByUtil private constructor() {
      * @return return 未授权的权限提示语
      */
     private fun hasSelfPermissionsReminder(context: Context, vararg permissions: String): MutableMap<String, PermissionDto> {
-        Logger.d("Permission  hasSelfPermissionsReminder ")
+        println("Aspect - hasSelfPermissionsReminder ")
         val has = mutableMapOf<String, PermissionDto>()
         for (permission in permissions) {
             if (permissionExists(permission) && !hasSelfPermission(context, permission)) {
@@ -254,7 +300,7 @@ open class SendPermissionByUtil private constructor() {
      * @return return true if permission exists in SDK version
      */
     private fun permissionExists(permission: String): Boolean {
-        Logger.d("Permission  permissionExists ")
+        println("Aspect - permissionExists ")
         val minVersion = MIN_SDK_PERMISSIONS[permission]
         return minVersion == null || Build.VERSION.SDK_INT >= minVersion
     }
@@ -267,7 +313,7 @@ open class SendPermissionByUtil private constructor() {
      * @return return true if permission granted
      */
     private fun hasSelfPermission(context: Context, permission: String): Boolean {
-        Logger.d("Permission  hasSelfPermission ")
+        println("Aspect - hasSelfPermission ")
         return ActivityCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
     }
 
@@ -278,7 +324,7 @@ open class SendPermissionByUtil private constructor() {
      * @return 所有都同意返回true 否则返回false
      */
     private fun verifyPermissions(vararg grantResults: Int): Boolean {
-        Logger.d("Permission  verifyPermissions ")
+        println("Aspect - verifyPermissions ")
         if (grantResults.isEmpty()) return false
         for (result in grantResults) {
             if (result != PackageManager.PERMISSION_GRANTED) {

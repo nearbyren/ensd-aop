@@ -1,4 +1,4 @@
-package ejiayou.aop.module.permis
+package ejiayou.aop.module.click
 
 /**
  * @author: lr

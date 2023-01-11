@@ -81,7 +81,7 @@ dependencies {
     api AndroidX.appcompat
     api Google.material
     implementation ThirdLib.Logger.logger
-//    api project(':aop-module')
-    implementation 'ejiayou.aop.module:aop:1.0.0'
+    api project(':aop-module')
+//    implementation 'ejiayou.aop.module:aop:1.0.0'
 
 }
