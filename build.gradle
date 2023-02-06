@@ -25,6 +25,8 @@ buildscript {
         // 增加AGC插件配置，请您参见AGC插件依赖关系选择合适的AGC插件版本。
 //        classpath 'com.hujiang.aspectjx:gradle-android-plugin-aspectjx:2.0.10'
         classpath 'io.github.wurensen:gradle-android-plugin-aspectjx:3.3.2'
+        classpath 'com.github.nearbyren:ensd-pub:0.0.1'
+
 
     }
 }
