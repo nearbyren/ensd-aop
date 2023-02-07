@@ -30,6 +30,10 @@ buildscript {
 
     }
 }
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+def mavenUserName = properties.getProperty('MAVEN_USERNAME')
+def mavenPassword = properties.getProperty('MAVEN_PASSWORD')
 allprojects {
     repositories {
         google()
@@ -45,10 +49,10 @@ allprojects {
         // 配置HMS Core SDK的Maven仓地址。
         maven { url 'https://developer.huawei.com/repo/' }
         maven {
-            url "https://gitlab.ejiayou.com/api/v4/projects/578/packages/maven"
+            url MAVEN_SNAPSHOT_URL
             credentials(HttpHeaderCredentials) {
-                name = 'Deploy-Token'
-                value = 'NyHu_b5KQ9qRva6MU2J6'
+                name = mavenUserName
+                value = mavenPassword
             }
             authentication {
                 header(HttpHeaderAuthentication)
